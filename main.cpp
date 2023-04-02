@@ -357,23 +357,3 @@ int main()
 }
 
 
-
-
-/*
-3
-Crima din Orient Express
-Agatha Cristie
- 342
- 5
- 30
-Ion
-Liviu Rebreanu
-412
-5
- 43
-abc def
-AAA BBB
- 34
- 2
- 3
-*/
