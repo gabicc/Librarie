@@ -22,7 +22,8 @@ struct Carte
     int pret;
 
 
-    void afisare(){
+    void afisare()
+    {
         cout<<"Nume carte: \t"<<nume<<endl;
         cout<<"Autor:\t"<<autor.numeA<<" "<<autor.prenume<<endl;
         cout<<"Pagini:\t"<<pagini<<endl;
@@ -109,9 +110,11 @@ int main()
 
         cout << "3. Cumapara carti\n";
 
-        cout << "4. Ordonare descrescatoare in functie de numarul de capitole"<<endl;
+        cout << "4. Ordonare descrescatoare in functie de numarul de exemplare" << endl;
 
-        cout << "5. Ordonare crescatoare a numarului de pagini estimate per capitol"<<endl;
+        cout << "5. Numarul total de carti" << endl;
+
+        cout << "6. Cea mai scumpa carte si cea mai scumpa pereche de doua carti" << endl;
 
         cout << "Daca vreti sa iesiti apasati tasta 0\n";
 
@@ -169,7 +172,7 @@ int main()
         case 3:
         {
             SetConsoleTextAttribute (GetStdHandle(STD_OUTPUT_HANDLE), 13);
-            cout<<"cerinta 3"<<endl;
+            cout<<"Carti cumparate"<<endl;
             //..............
             int n;
             int alegeri_carti, nr_exemplare;
@@ -240,25 +243,12 @@ int main()
 
         case 5:
         {
-            SetConsoleTextAttribute (GetStdHandle(STD_OUTPUT_HANDLE), 17);
-            cout<<"cerinta 5"<<endl;
-            int* pag_cap = new int[nr];
-            for(int i = 0; i < nr; i++)
-            {
-                pag_cap[i] = carti[i].pagini/carti[i].exemplare;
-            }
-            for(int i = 0; i < nr-1; i++)
-            {
-                for(int j = i + 1; j < nr; j++)
-                {
-                    if(pag_cap[i] > pag_cap[j])
-                    {
-                        int aux = pag_cap[i];
-                        pag_cap[i] = pag_cap[j];
-                        pag_cap[j] = aux;
-                    }
-                }
-            }
+            SetConsoleTextAttribute (GetStdHandle(STD_OUTPUT_HANDLE), 13);
+            cout<<"Numar de carti existente"<<endl;
+            int tot = 0;
+            for(int i = 1; i <= nr; i++)
+                tot += carti[i].exemplare;
+            cout << "Numarul total de carti disponibile este: " << tot <<endl;
             cout << "\n Apasati orice tasta pentru a va reintoarce la meniu!";
             getch();
             system("CLS");
@@ -269,9 +259,37 @@ int main()
 
         case 6:
         {
-            SetConsoleTextAttribute (GetStdHandle(STD_OUTPUT_HANDLE), 21);
-            cout<<"cerinta 6"<<endl;
+            SetConsoleTextAttribute (GetStdHandle(STD_OUTPUT_HANDLE), 15);
+            cout<<"Cea mai scumpa carte si pereche de carti"<<endl;
             //..............
+            int maxpret1 = max(carti[1].pret, carti[2].pret), maxpret2 = min(carti[1].pret, carti[2].pret), pozcarte[2];
+            if(carti[1].pret > carti[2].pret)
+            {
+                maxpret1 = carti[1].pret;
+                maxpret2 = carti[2].pret;
+                pozcarte[0] = 1;
+                pozcarte[1] = 2;
+            }
+            else{
+                maxpret1 = carti[2].pret;
+                maxpret2 = carti[1].pret;
+                pozcarte[0] = 2;
+                pozcarte[1] = 1;
+            }
+            for(int i = 3; i <= nr; i++){
+                if(carti[i].pret > maxpret1){
+                    maxpret2 = maxpret1;
+                    pozcarte[1] = pozcarte[0];
+                    maxpret1 = carti[i].pret;
+                    pozcarte[0] = i;
+                }
+                else if(carti[i].pret > maxpret2){
+                    maxpret2 = carti[i].pret;
+                    pozcarte[1] = i;
+                }
+            }
+            cout << "cea mai scumpa carte este: \"" << carti[pozcarte[0]].nume;
+            cout << "\" si cea mai scumpa pereche de carti este : \"" << carti[pozcarte[0]].nume << "\" si \"" << carti[pozcarte[1]].nume << "\"";
             cout << "\n Apasati orice tasta pentru a va reintoarce la meniu!";
             getch();
             system("CLS");
