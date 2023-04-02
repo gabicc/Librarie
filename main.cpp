@@ -18,17 +18,19 @@ struct Carte
     aut autor;
     char nume[101];
     int pagini;
-    int exemplare;
+    int exemplare_existente;
     int pret;
+    int exemplare_vandute;
 
 
     void afisare()
     {
         cout<<"Nume carte: \t"<<nume<<endl;
-        cout<<"Autor:\t"<<autor.numeA<<" "<<autor.prenume<<endl;
-        cout<<"Pagini:\t"<<pagini<<endl;
-        cout<<"Exemplare:\t"<<exemplare<<endl;
-        cout<<"Pret:\t"<<pret<<endl;
+        cout<<"Autor:\t\t"<<autor.numeA<<" "<<autor.prenume<<endl;
+        cout<<"Pagini:\t\t"<<pagini<<endl;
+        cout<<"Exemplare existente:\t"<<exemplare_existente<<endl;
+        cout<<"Exemplare vandute:\t"<<exemplare_vandute<<endl;
+        cout<<"Pret:\t\t"<<pret<<endl;
         cout << "----------------------------------------------------"<<endl<<endl;
     }
 
@@ -46,7 +48,10 @@ void citire (Carte carti[], int &nr)
     {
         fin.get();
         fin.getline(carti[i].nume, 26);
-        fin>>carti[i].autor.numeA>>carti[i].autor.prenume>>carti[i].pagini>>carti[i].exemplare>>carti[i].pret;
+        fin>>carti[i].autor.numeA;
+        fin>>carti[i].autor.prenume>>carti[i].pagini;
+        fin>>carti[i].exemplare_existente>>carti[i].exemplare_vandute;
+        fin>>carti[i].pret;
     }
     fin.close();
 
@@ -71,7 +76,8 @@ void rescriere(Carte carti[], int nr)
     {
         fout<<carti[i].nume<<endl;
         fout<<carti[i].autor.numeA<<" "<<carti[i].autor.prenume<<endl;
-        fout<<carti[i].pagini<<endl<<carti[i].exemplare<<endl<<carti[i].pret<<endl;
+        fout<<carti[i].pagini<<endl<<carti[i].exemplare_existente<<endl;
+        fout<<carti[i].exemplare_vandute<<endl<<carti[i].pret<<endl;
     }
     fout.close();
 
@@ -85,7 +91,7 @@ void adaugare(Carte carti[], Carte c, int &nrcarti)
     /*fstream fout("date.in", ios::app);
     fout<<c.nume<<endl;
     fout<<c.autor.numeA<<" "<<c.autor.prenume<<endl;
-    fout<<c.pagini<<endl<<c.exemplare<<endl<<c.pret<<endl;
+    fout<<c.pagini<<endl<<c.exemplare_existente<<endl<<c.pret<<endl;
     fout.close();
     */
 
@@ -110,11 +116,13 @@ int main()
 
         cout << "3. Cumapara carti\n";
 
-        cout << "4. Ordonare descrescatoare in functie de numarul de exemplare" << endl;
+        cout << "4. Ordonare descrescatoare in functie de numarul de exemplare_existente" << endl;
 
         cout << "5. Numarul total de carti" << endl;
 
         cout << "6. Cea mai scumpa carte si cea mai scumpa pereche de doua carti" << endl;
+
+        cout << "7. Cea mai vanduta carte din librarie" << endl;
 
         cout << "Daca vreti sa iesiti apasati tasta 0\n";
 
@@ -123,9 +131,6 @@ int main()
         raspuns = getch();
         raspuns = raspuns - '0';
         system("CLS");
-
-
-
 
         switch(raspuns)
         {
@@ -156,8 +161,9 @@ int main()
             cin >> carte.autor.numeA >> carte.autor.prenume;
             cout << "Introdu numarul de pagini ale cartii" << endl;
             cin >> carte.pagini;
-            cout << "Introdu numarul de exemplare" << endl;
-            cin >> carte.exemplare;
+            cout << "Introdu numarul de exemplare total" << endl;
+            cin >> carte.exemplare_existente;
+            carte.exemplare_vandute = 0;
             cout << "Introdu pretul cartii" << endl;
             cin >> carte.pret;
             adaugare(carti, carte, nr);
@@ -190,16 +196,21 @@ int main()
                     cout << "Cate exemplare doresti: " << endl;
                     cin >> nr_exemplare;
                     char varianta[5];
-                    if(carti[alegeri_carti].exemplare < nr_exemplare)
+                    if(carti[alegeri_carti].exemplare_existente < nr_exemplare)
                     {
-                        cout << "Nu avem numarul acela de exemplare. Doriti sa cumparati doar " << carti[alegeri_carti].exemplare << " exemplare? ";
+                        cout << "Nu avem numarul acela de exemplare din cartea " << carti[alegeri_carti].nume << " de " << carti[alegeri_carti].autor.numeA << " " << carti[alegeri_carti].autor.prenume;
+                        cout << ". Doriti sa cumparati doar " << carti[alegeri_carti].exemplare_existente << " exemplare? ";
                         cin >> varianta;
                         if(stricmp(varianta, "Da") == 0)
-                            carti[alegeri_carti].exemplare = 0;
+                        {
+                            carti[alegeri_carti].exemplare_vandute += carti[alegeri_carti].exemplare_existente;
+                            carti[alegeri_carti].exemplare_existente = 0;
+                        }
                     }
                     else
                     {
-                        carti[alegeri_carti].exemplare -= nr_exemplare;
+                        carti[alegeri_carti].exemplare_existente -= nr_exemplare;
+                        carti[alegeri_carti].exemplare_vandute += nr_exemplare;
                     }
                 }
 
@@ -217,12 +228,12 @@ int main()
         case 4:
         {
             SetConsoleTextAttribute (GetStdHandle(STD_OUTPUT_HANDLE), 15);
-            cout<<"Lista de carti ordonata dupa numarul de exemplare"<<endl;
+            cout<<"Lista de carti ordonata dupa numarul de exemplare existente"<<endl;
             for(int i = 1; i < nr ; i++)
             {
                 for(int j = i + 1; j <=nr; j++)
                 {
-                    if(carti[i].exemplare < carti[j].exemplare)
+                    if(carti[i].exemplare_existente < carti[j].exemplare_existente)
                     {
                         Carte aux = carti[i];
                         carti[i]= carti[j];
@@ -247,7 +258,7 @@ int main()
             cout<<"Numar de carti existente"<<endl;
             int tot = 0;
             for(int i = 1; i <= nr; i++)
-                tot += carti[i].exemplare;
+                tot += carti[i].exemplare_existente;
             cout << "Numarul total de carti disponibile este: " << tot <<endl;
             cout << "\n Apasati orice tasta pentru a va reintoarce la meniu!";
             getch();
@@ -270,20 +281,24 @@ int main()
                 pozcarte[0] = 1;
                 pozcarte[1] = 2;
             }
-            else{
+            else
+            {
                 maxpret1 = carti[2].pret;
                 maxpret2 = carti[1].pret;
                 pozcarte[0] = 2;
                 pozcarte[1] = 1;
             }
-            for(int i = 3; i <= nr; i++){
-                if(carti[i].pret > maxpret1){
+            for(int i = 3; i <= nr; i++)
+            {
+                if(carti[i].pret > maxpret1)
+                {
                     maxpret2 = maxpret1;
                     pozcarte[1] = pozcarte[0];
                     maxpret1 = carti[i].pret;
                     pozcarte[0] = i;
                 }
-                else if(carti[i].pret > maxpret2){
+                else if(carti[i].pret > maxpret2)
+                {
                     maxpret2 = carti[i].pret;
                     pozcarte[1] = i;
                 }
@@ -301,7 +316,18 @@ int main()
         case 7:
         {
             SetConsoleTextAttribute (GetStdHandle(STD_OUTPUT_HANDLE), 14);
-            cout<<"cerinta 7"<<endl;
+            cout<<"Top seller-ul librariei"<<endl;
+            int maxvanzari = carti[1].exemplare_vandute, pozvanzari = 1;
+            for(int i = 2; i <= nr; i++)
+            {
+                if(maxvanzari < carti[i].exemplare_vandute)
+                {
+                    maxvanzari = carti[i].exemplare_vandute;
+                    pozvanzari = i;
+                }
+            }
+            cout << "Top seller-ul acestei librarii este: " << endl;
+            carti[pozvanzari].afisare();
             //..............
             cout << "\n Apasati orice tasta pentru a va reintoarce la meniu!";
             getch();
