@@ -12,20 +12,30 @@ struct aut
 };
 
 
-struct CARTI
+struct Carte
 {
 
     aut autor;
-    char nume[26];
+    char nume[101];
     int pagini;
-    int exemplare
+    int exemplare;
     int pret;
 
-} carte[101];
+
+    void afisare(){
+        cout<<"Nume carte: \t"<<nume<<endl;
+        cout<<"Autor:\t"<<autor.numeA<<" "<<autor.prenume<<endl;
+        cout<<"Pagini:\t"<<pagini<<endl;
+        cout<<"Exemplare:\t"<<exemplare<<endl;
+        cout<<"Pret:\t"<<pret<<endl;
+        cout << "----------------------------------------------------"<<endl<<endl;
+    }
+
+};
 
 
 
-void citire (int &nr)
+void citire (Carte carti[], int &nr)
 {
     ifstream fin("date.in");
 
@@ -34,59 +44,57 @@ void citire (int &nr)
     for(int i=1; i<=nr; i++)
     {
         fin.get();
-        fin.getline(carte[i].nume, 26);
-        fin>>carte[i].autor.numeA>>carte[i].autor.prenume>>carte[i].pagini>>carte[i].exemplare>>carte[i].pret;
+        fin.getline(carti[i].nume, 26);
+        fin>>carti[i].autor.numeA>>carti[i].autor.prenume>>carti[i].pagini>>carti[i].exemplare>>carti[i].pret;
     }
     fin.close();
 
 }
-void afisare (int nr)
+void afisare (Carte carti[], int nr)
 {
 
 
     for(int i=1; i<=nr; i++)
     {
-        cout<<carte[i].nume<<endl;
-        cout<<carte[i].autor.numeA<<" "<<carte[i].autor.prenume<<endl;
-        cout<<carte[i].pagini<<endl<<carte[i].exemplare<<endl<<carte[i].pret<<endl;
+        carti[i].afisare();
     }
 
 
 }
 
-void rescriere(int nr)
+void rescriere(Carte carti[], int nr)
 {
     ofstream fout("date.in");
     fout<<nr<<endl;
     for(int i=1; i<=nr; i++)
     {
-        fout<<carte[i].nume<<endl;
-        fout<<carte[i].autor.numeA<<" "<<carte[i].autor.prenume<<endl;
-        fout<<carte[i].pagini<<endl<<carte[i].exemplare<<endl<<carte[i].pret<<endl;
+        fout<<carti[i].nume<<endl;
+        fout<<carti[i].autor.numeA<<" "<<carti[i].autor.prenume<<endl;
+        fout<<carti[i].pagini<<endl<<carti[i].exemplare<<endl<<carti[i].pret<<endl;
     }
     fout.close();
 
 }
 
 
-void adaugare( CARTI c)
+void adaugare(Carte carti[], Carte c, int &nrcarti)
 {
-    fstream fout("date.in", ios::app);
-
-
-
+    nrcarti++;
+    carti[nrcarti] = c;
+    /*fstream fout("date.in", ios::app);
     fout<<c.nume<<endl;
     fout<<c.autor.numeA<<" "<<c.autor.prenume<<endl;
     fout<<c.pagini<<endl<<c.exemplare<<endl<<c.pret<<endl;
     fout.close();
+    */
 
 }
 
 int main()
 {
     int nr;
-
-    citire(nr);
+    Carte carti[101];
+    citire(carti, nr);
 
     int raspuns;
 
@@ -95,20 +103,22 @@ int main()
         SetConsoleTextAttribute (GetStdHandle(STD_OUTPUT_HANDLE), 32);
         cout << "            ~Libraria GobTim~            \n\n";
         SetConsoleTextAttribute (GetStdHandle(STD_OUTPUT_HANDLE), 11);
-        cout << "Afisare fond de carte. Apasati 1\n";
-        SetConsoleTextAttribute (GetStdHandle(STD_OUTPUT_HANDLE), 14);
-        cout << "Daca ...cerinta 2... apasati tasta 2\n";
+        cout << "1. Afisare fond de carte\n";
 
+        cout << "2. Adaugati o carte la fondul de Carte\n";
 
-        SetConsoleTextAttribute (GetStdHandle(STD_OUTPUT_HANDLE), 15);
-        cout<<"4. Ordonare descrescatoare in functie de numarul de capitole"<<endl;
-        SetConsoleTextAttribute (GetStdHandle(STD_OUTPUT_HANDLE), 15);
-        cout<<"5. Ordonare crescatoare a numarului de pagini estimate per capitol"<<endl;
-        SetConsoleTextAttribute (GetStdHandle(STD_OUTPUT_HANDLE), 15);
+        cout << "3. Cumapara carti\n";
+
+        cout << "4. Ordonare descrescatoare in functie de numarul de capitole"<<endl;
+
+        cout << "5. Ordonare crescatoare a numarului de pagini estimate per capitol"<<endl;
+
         cout << "Daca vreti sa iesiti apasati tasta 0\n";
 
-        cin >> raspuns;
-        Sleep(100);
+        //cin >> raspuns;
+        //Sleep(100);
+        raspuns = getch();
+        raspuns = raspuns - '0';
         system("CLS");
 
 
@@ -120,7 +130,7 @@ int main()
         {
             SetConsoleTextAttribute (GetStdHandle(STD_OUTPUT_HANDLE), 13);
             cout<<" Fond de carte."<<endl;
-            afisare(nr);
+            afisare(carti, nr);
             //system("Color 4D");
             cout << "\n Apasati orice tasta pentru a va reintoarce la meniu!";
             getch();
@@ -131,9 +141,24 @@ int main()
 
         case 2:
         {
-            SetConsoleTextAttribute (GetStdHandle(STD_OUTPUT_HANDLE), 18);
-            cout<<"cerinta 2"<<endl;
-            adaugare();
+            ///SetConsoleTextAttribute (GetStdHandle(STD_OUTPUT_HANDLE), 18);
+            cout<<"Carte noua"<<endl;
+            Carte carte;
+            cout << "Introdu numele cartii" << endl;
+            ///int a =getch();
+            cin.clear();
+            cin.sync();
+            cin.getline(carte.nume, 100);
+            cout << "Introdu numele si prenumele autorului" << endl;
+            cin >> carte.autor.numeA >> carte.autor.prenume;
+            cout << "Introdu numarul de pagini ale cartii" << endl;
+            cin >> carte.pagini;
+            cout << "Introdu numarul de exemplare" << endl;
+            cin >> carte.exemplare;
+            cout << "Introdu pretul cartii" << endl;
+            cin >> carte.pret;
+            adaugare(carti, carte, nr);
+            rescriere(carti, nr);
             cout << "\n Apasati orice tasta pentru a va reintoarce la meniu!";
             getch();
             system("CLS");
@@ -146,6 +171,38 @@ int main()
             SetConsoleTextAttribute (GetStdHandle(STD_OUTPUT_HANDLE), 13);
             cout<<"cerinta 3"<<endl;
             //..............
+            int n;
+            int alegeri_carti, nr_exemplare;
+            cout << "Introdu numarul de carti cumparate" << endl;
+            cin >> n;
+
+            for(int i = 0; i < n; i++)
+            {
+                cout << "Introdu indexul cartii dorite: " << endl;
+                cin >> alegeri_carti;
+                if(alegeri_carti > nr)
+                    cout << "Nu avem cartea dorita";
+                else
+                {
+                    cout << "Cate exemplare doresti: " << endl;
+                    cin >> nr_exemplare;
+                    char varianta[5];
+                    if(carti[alegeri_carti].exemplare < nr_exemplare)
+                    {
+                        cout << "Nu avem numarul acela de exemplare. Doriti sa cumparati doar " << carti[alegeri_carti].exemplare << " exemplare? ";
+                        cin >> varianta;
+                        if(stricmp(varianta, "Da") == 0)
+                            carti[alegeri_carti].exemplare = 0;
+                    }
+                    else
+                    {
+                        carti[alegeri_carti].exemplare -= nr_exemplare;
+                    }
+                }
+
+            }
+            rescriere(carti, nr);
+
             cout << "\n Apasati orice tasta pentru a va reintoarce la meniu!";
             getch();
             system("CLS");
@@ -157,22 +214,21 @@ int main()
         case 4:
         {
             SetConsoleTextAttribute (GetStdHandle(STD_OUTPUT_HANDLE), 15);
-            cout<<"cerinta 4"<<endl;
+            cout<<"Lista de carti ordonata dupa numarul de exemplare"<<endl;
             for(int i = 1; i < nr ; i++)
             {
                 for(int j = i + 1; j <=nr; j++)
                 {
-                    if(carte[i].exemplare < carte[j].exemplare)
+                    if(carti[i].exemplare < carti[j].exemplare)
                     {
-                        CARTI aux = carte[i];
-                        carte[i]= carte[j];
-                        carte[j]= aux;
+                        Carte aux = carti[i];
+                        carti[i]= carti[j];
+                        carti[j]= aux;
                     }
                 }
             }
-            rescriere(carte, nr);
-            for(int i = 1; i <= nr; i++)
-                cout << carte[i].exemplare << " ";
+            rescriere(carti, nr);
+            afisare(carti, nr);
             cout << '\n';
             cout << "\n Apasati orice tasta pentru a va reintoarce la meniu!";
             getch();
@@ -189,7 +245,7 @@ int main()
             int* pag_cap = new int[nr];
             for(int i = 0; i < nr; i++)
             {
-                pag_cap[i] = carte[i].pagini/carte[i].exemplare;
+                pag_cap[i] = carti[i].pagini/carti[i].exemplare;
             }
             for(int i = 0; i < nr-1; i++)
             {
