@@ -116,7 +116,7 @@ int main()
 
         cout << "3. Cumapara carti\n";
 
-        cout << "4. Ordonare descrescatoare in functie de numarul de exemplare_existente" << endl;
+        cout << "4. Ordonare descrescatoare in functie de numarul de exemplare existente" << endl;
 
         cout << "5. Numarul total de carti" << endl;
 
